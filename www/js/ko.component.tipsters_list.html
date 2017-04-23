@@ -1,0 +1,245 @@
+<script id="tipsters-list" type="text/html">
+    <div class="tipsters-container col-12" data-bind="css: loading() ? 'loading' : ''">
+        <h3 class="row tipster-top-text pb-2 pb-lg-4">
+            <div class="col-12 px-0 px-lg-4 bavel">
+                <!-- ko if: loading() -->
+                    <span>Loading tipsters...</span>
+                <!-- /ko -->
+                <!-- ko if: !loading() && filtered_total() > 0 -->
+                    <span>Showing <strong class="font-weight-bold" data-bind="text: filtered_total"></strong> tipsters</span>
+                <!-- /ko -->
+                <!-- ko if: !loading() && filtered_total() === 0 -->
+                    <span>No tipsters found :(</span>
+                <!-- /ko -->
+            </div>
+        </h3>
+
+        <div class="filter-cover-lg-down d-lg-none" data-close-filters></div>
+
+        <header class="row tipster-header text-center d-lg-flex mb-lg-3" data-tipster-header>
+            <div class="col-12">
+                <div class="filters">
+                    <div class="row justify-content-end">
+                        <div class="col-12 d-lg-none text-right">
+                            <button type="button" class="text-button mb-3 d-inline-block no-focus" data-close-filters>
+                                Close<i class="icon-cross"></i>
+                            </button>
+                        </div>
+                        <div class="col-12 px-lg-3 col-lg-2">
+                            <select class="custom-select w-100 mb-3 mb-lg-0" data-bind="
+                                options: filters.fav_sport_id.values,
+                                selectedOptions: filters.fav_sport_id.observe,
+                                optionsValue: 'id',
+                                optionsText: 'title',
+                            "></select>
+                        </div>
+                        <div class="col-12 px-lg-3 col-lg-3 col-xxl-2">
+                            <select class="custom-select w-100 mb-3 mb-lg-0" data-bind="
+                                options: filters.picks.values,
+                                selectedOptions: filters.picks.observe,
+                                optionsValue: 'id',
+                                optionsText: 'name',
+                            "></select>
+                        </div>
+                        <div class="col-12 px-lg-3 col-lg-auto">
+                            <div class="btn-group">
+                                <!-- ko foreach: filters.site_id.values -->
+                                <button type="button" class="btn btn-secondary" data-bind="click: $component.setServiceFilter, css: { active: $component.filters.site_id.observe.indexOf($data.id)!==-1 }">
+                                    <i class="icon-before icon-s d-none d-sm-inline-block" data-bind="css: 'icon-'+$data.id"></i>
+                                    <!-- ko text: $data.name --><!-- /ko -->
+                                </button>
+                                <!-- /ko -->
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-auto text-right-lg px-lg-3 filters__reset" data-bind="visible: filtersInUse">
+                            <button class="button button--blue-dark mt-3 mt-lg-0" type="button" data-bind="click: resetFilters">Reset Filters</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="sort no-gutters row justify-content-center">
+                    <div class="d-none d-lg-flex col-lg sort__placeholder"></div>
+                    <div class="col-lg">
+                        <div class="d-block d-lg-flex row text-lg-left">
+                            <!-- ko foreach: listHeaders -->
+                            <div class="col-lg sort__col" data-bind="css: $data.css">
+                                <button type="button"
+                                        class="sort__button no-focus text-truncate"
+                                        data-bind="css: {'asc': $data.inUse.asc(), 'dsc': $data.inUse.dsc()}, click: $component.setSorting, disable: !$parent.filtered_total()">
+                                    <span data-bind="text: $data.name"></span>
+                                </button>
+                            </div>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- ko if: filtered_total() > 0 -->
+            <!-- ko foreach: tipsters -->
+            <article class="row box tipster mb-3 mb-lg-2">
+                <header class="col-12 tipster__head">
+                    <div class="row h-border-bottom h-border-bottom--lg-none">
+                        <a class="col-auto avatar avatar--60" data-bind="
+                            style: {backgroundImage: 'url(' + $data.avatar_url + ')'},
+                            attr: { 'href': $root.Router('ts_tipster.profile',$data) },
+                            trackClick: ['Tipster profile','click link','Tipster avatar']
+                        "></a>
+                        <div class="tipster__name-box">
+                            <h1 class="tipster__name-box__name text-truncate">
+                                <a class="font-weight-bold" data-bind="
+                                    text: $data.name,
+                                    attr: { 'href': $root.Router('ts_tipster.profile',$data) },
+                                    trackClick: ['Tipster profile','click link','Tipster name']
+                            "></a>
+                            </h1>
+                            <div class="tipster__name-box__info">
+                                <span class="label d-inline-block">
+                                    <!-- ko if: $data.sport.sport_id -->
+                                    <i class="icon-before icon-s icon-sport"
+                                       data-bind="css: 'icon-' + $data.sport.sport_slug"></i>
+                                    <span data-bind="text: $data.sport.sport_name"></span>
+                                    <!-- /ko -->
+                                </span>
+                                <div class="tipster__rank d-inline-block pl-3 pl-lg-1">
+                                    <span class="number font-weight-bold"
+                                          data-bind="text: '#' + $data.stats.rank"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="col">
+                    <div class="tipster__data row">
+                        <div class="col col-lg-2 px-3 pr-lg-0 pl-lg-5 v-border-left--lg tipster__box-2 mb-3 mb-lg-0 d-lg-flex align-items-center">
+                            <span class="label d-lg-none">Topster Index</span>
+                            <span class="text-nowrap cur-help"
+                                  data-toggle="tooltip"
+                                  data-placement="top auto"
+                                  title="This is a special statistical figure that ranks the tipsters.<br>It's the combined calculation of the three base statistics <strong>Profitability</strong>, <strong>Stability</strong> and <strong>Experience</strong>."
+                                  data-html="true">
+                                <strong class="tipster__box-2--text-big font-weight-bold text-gold" data-bind="figure: $data.stats.topsters_index, format: {multiplier: 1000}">
+                                </strong><i class="icon-info-circled icon-xs icon-s-lg d-none d-lg-inline-block icon-blue-light icon-superscript icon-after"></i>
+                            </span>
+
+                        </div>
+                        <div class="col tipster__box-3 pl-lg-0">
+                            <div class="row h-100 pb-3 pb-lg-0">
+                                <div class="col-auto col-lg-6 col-xxl-5 d-none d-sm-flex v-border-right tipster__new-figures align-items-center">
+                                    <div class="col-auto col-lg-4 pr-4 pl-lg-0 pr-lg-1 pr-xl-4">
+                                        <span>
+                                            <span class="label d-lg-none">Profitability</span>
+                                            <span data-bind="figure: $data.stats.profitability, format: {multiplier: 1000}, css: $data.stats.profitability > 1 ? 'text-green' : 'text-red'"></span>
+                                        </span>
+                                    </div>
+                                    <div class="col-auto col-lg-4 pr-4 px-lg-1">
+                                        <span>
+                                            <span class="label d-lg-none">Stability</span>
+                                            <span data-bind="figure: $data.stats.stability, format: {multiplier: 1000}"></span>
+                                        </span>
+                                    </div>
+                                    <div class="col-auto col-lg-4 px-lg-1">
+                                        <span>
+                                            <span class="label d-lg-none">Experience</span>
+                                            <span data-bind="figure: $data.stats.experience, format: {multiplier: 1000}"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col col-auto col-lg-6 col-xxl-7 px-3 pl-sm-5 tipster__old-figures">
+                                    <div class="row h-100 align-items-center">
+                                        <div class="col-auto col-lg-4 pr-4 pr-lg-1">
+                                            <span>
+                                                <span class="label d-lg-none">Profit</span>
+                                                <strong class="tipster__box-3--text-big font-weight-bold"
+                                                        data-bind="figure: $data.stats.profit, css: $data.stats.profit > 0 ? 'text-green' : 'text-red'"></strong>
+                                            </span>
+                                        </div>
+                                        <div class="col-auto col-lg-4 pr-4 px-lg-1">
+                                            <span>
+                                                <span class="label d-lg-none">Yield</span>
+                                                <span data-bind="figure: $data.stats.yield, format: {multiplier: 100, decimal: 2, percentage: true}, css: $data.stats.yield > 0 ? 'text-green' : 'text-red'"></span>
+                                            </span>
+                                        </div>
+                                        <div class="col-auto col-lg-4 px-lg-1">
+                                            <span>
+                                                <span class="label d-lg-none">Picks</span>
+                                                <span data-bind="figure: $data.stats.picks"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto d-none d-lg-flex align-items-center">
+                            <div class="pr-3">
+                                <a class="button" data-bind="attr: { 'href': $root.Router('ts_tipster.profile',$data) }, trackClick:['Tipster profile','click link','See profile button']">See Profile</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <a class="tipster-badge tipster-badge--flip-lg" data-bind="
+                    css: 'tipster-badge--' + $data.site_id,
+                    attr: { 'href': $root.Router('ts_tipster.profile',$data) },
+                    trackClick: ['Tipster profile','click link','Tipster site']
+                ">
+                    <span class="sr-only">
+                        <span data-bind="text: $data.site_id"></span>'s tipster
+                    </span>
+                </a>
+
+                <a href="#" class="tipster__mobile-link d-lg-none" data-bind="attr: { 'href': $root.Router('ts_tipster.profile',$data) }">
+                    <span class="sr-only"><span data-bind="text: $data.name"></span>'s Profile</span>
+                </a>
+            </article>
+            <!-- /ko -->
+        <!-- /ko -->
+        <!-- ko if: !loading() && filtered_total() === 0 -->
+        <div class="box p-5 box--message" data-bind="css: error() ? 'box--highlight' : ''">
+            <div class="copy">
+                <!-- ko ifnot: error() -->
+                    Sorry, no such tipster(s) found.<br>
+                    Try <strong>reseting the filters</strong> and add other parameters.
+                    <div class="text-center d-lg-none mt-5">
+                        <button class="button button--blue-dark"
+                                type="button"
+                                data-bind="click: resetFilters">
+                            Reset Filters
+                        </button>
+                    </div>
+                <!-- /ko -->
+                <!-- ko if: error() -->
+                    Sorry an error happend while fetching tipsters, please reload the page and try again.
+                <!-- /ko -->
+            </div>
+        </div>
+        <!-- /ko -->
+
+        <nav class="row pager text-center" data-bind="css: filtered_total() <= itemsPerPage ? 'd-none' : ''">
+            <div class="pager__container">
+                <a class="pager__button pager__button--prev v-center h-100" data-bind="visible: page() > 1, click: prevPage, attr: {href: prevPageUrl}">
+                    <i class="icon-arrow-left icon-before"></i><span class="d-none d-lg-inline-block">Previous</span>
+                </a>
+                <div class="pager__numbers v-center h-100 bavel">
+                    <div>
+                        <input class="pager__active-page px-3 mx-2 d-inline-block text-center" data-bind="textInput: pagerInput, attr: {max: numberOfPages()}" type="number" min="1">
+                        <span class="d-inline-block">out of</span>
+                        <strong class="mx-2 d-inline-block" data-bind="text: numberOfPages"></strong>
+                    </div>
+                </div>
+                <a class="pager__button pager__button--next v-center h-100" data-bind="visible: page() < numberOfPages(), click: nextPage, attr: {href: nextPageUrl}">
+                    <span class="d-none d-lg-inline-block">Next</span><i class="icon-arrow-right icon-after"></i>
+                </a>
+            </div>
+        </nav>
+
+        <button class="fab d-lg-none no-focus" data-bind="css: { 'fab--marker': filtersInUse() }"
+                type="button"
+                data-open-filters>
+            <i class="fab__icon icon-filter icon-m"></i>
+        </button>
+
+    </div>
+</script>

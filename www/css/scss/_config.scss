@@ -1,0 +1,73 @@
+// breakpoint
+$bg-color: #efefef;
+$hero-closed-h: 10vh;
+
+@mixin hover-focus() {
+
+  &:hover,
+  &:focus {
+    @content
+  }
+
+}
+
+// Keyframe mixin.
+// Since sass currently won't let you add dynamically create @keframes prefixes we have to
+// run through a couple if statements.
+$animation-prefix-list: "webkit", "";
+
+@mixin keyframes($animationName){
+  @each $pfx in $animation-prefix-list {
+    $prefix: if($pfx == "", "", #{"-"+$pfx+"-"});
+    @if $pfx == "webkit"{
+      @-webkit-keyframes #{$animationName}{
+        @content;
+      }
+    }@else if $pfx == "moz"{
+      @-moz-keyframes #{$animationName}{
+        @content;
+      }
+    }@else if $pfx == "ms"{
+      @-ms-keyframes #{$animationName}{
+        @content;
+      }
+    }@else if $pfx == "o"{
+      @-o-keyframes #{$animationName}{
+        @content;
+      }
+    }@else{
+      @keyframes #{$animationName}{
+        @content;
+      }
+    }
+  }
+}
+
+/// Mixin to prefix a property
+/// @author Hugo Giraudel
+/// @param {String} $property - Property name
+/// @param {*} $value - Property value
+/// @param {List} $prefixes (()) - List of prefixes to print
+@mixin prefix($property, $value, $prefixes: ()) {
+  @each $prefix in $prefixes {
+    #{'-' + $prefix + '-' + $property}: $value;
+  }
+
+  // Output standard non-prefixed declaration
+  #{$property}: $value;
+}
+
+@mixin placeholder($color) {
+  &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: $color;
+  }
+  &::-moz-placeholder { /* Firefox 19+ */
+    color: $color;
+  }
+  &:-ms-input-placeholder { /* IE 10+ */
+    color: $color;
+  }
+  &:-moz-placeholder { /* Firefox 18- */
+    color: $color;
+  }
+}

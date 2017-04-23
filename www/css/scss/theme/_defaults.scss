@@ -1,0 +1,29 @@
+html {
+    color: #222;
+    font-size: 1em;
+    line-height: 1.4;
+    background: $bg-color;
+}
+
+body {
+    padding-top: $hero-closed-h;
+    background: $bg-color;
+}
+
+/*
+ * Remove text-shadow in selection highlight:
+ * https://twitter.com/miketaylr/status/12228805301
+ *
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}

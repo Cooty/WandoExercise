@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta charset="utf-8">
+        <title>Products I Want</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+        <link rel="stylesheet" href="css/app.css" media="all">
+    </head>
+<body data-bind="css: uiState">
+
+    <!-- Header -->
+    <header class="hero">
+        <!-- Search container -->
+        <form class="search form d-flex" data-bind="submit: search">
+            <div class="d-flex w-100">
+                <div class="search__input-container w-100 mr-sm-2">
+                    <input class="search__input form-control"
+                           type="search"
+                           data-bind="value: keyword, disable: loading(), attr: {placeholder: lang().topbar ? lang().topbar.search_placeholder : ''}">
+
+                    <button class="search__reset"
+                            data-bind="click: reset, visible: keyword().length"
+                            type="button"></button>
+                </div>
+                <button class="search__btn btn btn-success" type="submit" data-bind="disable: loading(), attr: {title: lang().topbar ? lang().topbar.search_button : ''}">
+                    <i class="icon icon-search">
+                        <svg viewBox="0 0 32 32">
+                            <title data-bind="text: lang().topbar ? lang().topbar.search_button : ''"></title>
+                            <path d="M31.5,29.1l-5.9-5.9c2-2.6,3.1-5.7,3.1-8.9C28.7,6.5,22.3,0,14.3,0S0,6.5,0,14.4s6.5,14.4,14.4,14.4c3.2,0,6.4-1.1,8.9-3.1
+                                        l5.9,5.9c0.3,0.3,0.7,0.5,1.2,0.5s0.8-0.1,1.2-0.5C32.2,30.8,32.2,29.8,31.5,29.1z M25.3,14.5c0,6-4.9,10.9-10.9,10.9
+                                        S3.4,20.5,3.4,14.5S8.3,3.5,14.4,3.5S25.3,8.4,25.3,14.5z"/>
+                        </svg>
+                    </i>
+                    <i class="icon icon-loader">
+                        <img src="img/preloader.gif" alt="loading">
+                    </i>
+                </button>
+            </div>
+        </form> <!-- #Search container -->
+    </header> <!-- #Header -->
+
+    <!-- Container for loaded products -->
+    <main class="products container-fluid d-flex"
+          data-bind="template: { name: 'product-template', foreach: products }">
+    </main> <!-- #Container for loaded products -->
+
+    <div class="alert alert-warning" data-bind="text: lang().result ? lang().result.no_results_for_filter : '', visible: emptyList"></div>
+
+    <!-- JS Templates -->
+    <script type="text/html" id="product-template">
+        <article class="products__item card"
+                 itemscope
+                 itemtype="http://schema.org/IndividualProduct">
+            <header class="products__item__image">
+                <img data-bind="attr: {src: photo.main_url, alt: title}"
+                     itemprop="photo">
+                <a data-bind="attr: {href: $root.baseURL + redirect_url}" class="anchor"></a>
+            </header>
+            <div class="card-block">
+                <h4 class="products__item__title card-title"
+                    itemprop="name">
+                    <a data-bind="attr: {href: $root.baseURL + redirect_url}, text: title" class="products__item__title__link d-block"></a>
+                </h4>
+                <div class="text-center">
+                    <a data-bind="attr: {href: $root.baseURL + redirect_url}"
+                       class="products__item__btn btn btn-primary"
+                       itemprop="url"
+                       target="_blank"><span class="products__item__price"><span data-bind="text: price"></span></span> Buy now!</a>
+                </div>
+            </div>
+        </article>
+    </script>
+    <!-- #JS Templates -->
+
+    <!-- 3rd party JS libs -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script>
+        window.ko || document.write('<script src="js/vendor/knockout-4.4.2.min.js"><\/script>')
+    </script>
+    <!-- #3rd party JS libs -->
+
+    <!-- Application JS -->
+    <script src="js/ProductSearch.js"></script>
+    <script>
+        var ProductSearchInstance = ProductSearch.getInstance();
+        ProductSearchInstance.init();
+    </script>
+    <!-- #Application JS -->
+</body>
+</html>
